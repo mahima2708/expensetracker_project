@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ExpenseTracker</title>
+   
+</head>
+<body>
+    <h1>Sign-up</h1>
+    <div>
+        <form action="/" method="POST" >
+            <div>
+                <label  for="username" name="username">UserName</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div>
+                <label  id="emailid" name="email">E-mail</label>
+                <input type="text" id="emailid" name="email">
+            </div>
+              <div>
+                <label  id="password" name="password">Password</label>
+                <input type="password" id="password" name="password">
+            </div>
+            <div>
+                <button  onClick="signup(event)">SignUp</button>
+            </div>
+        </form>
+        <a href="../login/login.html">Existing User login</a>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        async function signup(event){
+            try{
+            event.preventDefault()
+            const signupDetails = {
+                username: event.target.form.username.value,
+                email: event.target.form.email.value,
+                password: event.target.form.password.value
+            }
+            const response = await axios.post('http://localhost:3000/signup',signupDetails)
+            if(response.status=== 201){
+                window.location.href = "../login/login.html"
+            }
+            else{
+                throw new Error('failed to signup')
+            }
+        }
+            catch(err){
+                document.body.innerHTML += `<div style="colour:red;">${err}</div>`;
+            }
+
+        }
+    </script>
+</body>
+</html>
