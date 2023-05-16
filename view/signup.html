@@ -4,30 +4,36 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
     <title>ExpenseTracker</title>
    
 </head>
 <body>
-    <h1>Sign-up</h1>
-    <div>
+        <nav class="bg-cyan-800 h-10 flex items-center justify-between">
+            <h1 class="text-slate-50 text-center">Sign Up</h1>
+            <a class="text-slate-50 px-20" href="loginpage.html">Existing User login</a>
+          </nav>
+    
+    <div class="bg-orange-500 h-screen flex justify-center" >
         <form action="/" method="POST" >
-            <div>
+            <h2 class="text-slate-50 text-center py-4">Enter Details</h2>
+            <div class="text-center mx-auto px-6 py-5 space-x-2">
                 <label  for="username" name="username">UserName</label>
                 <input type="text" id="username" name="username" required>
             </div>
-            <div>
+            <div class="text-center mx-auto px-6 py-5 space-x-6">
                 <label  id="emailid" name="email">E-mail</label>
                 <input type="text" id="emailid" name="email">
             </div>
-              <div>
+              <div class="text-center mx-auto px-6 py-5 space-x-2">
                 <label  id="password" name="password">Password</label>
                 <input type="password" id="password" name="password">
             </div>
-            <div>
+            <div class="text-center mx-auto hover:bg-white">
                 <button  onClick="signup(event)">SignUp</button>
             </div>
         </form>
-        <a href="../login/login.html">Existing User login</a>
+        
     </div>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
@@ -40,8 +46,8 @@
                 password: event.target.form.password.value
             }
             const response = await axios.post('http://localhost:3000/signup',signupDetails)
-            if(response.status=== 201){
-                window.location.href = "../login/login.html"
+            if(response.status=== 200){
+                window.location.href = "./view/loginpage.html"
             }
             else{
                 throw new Error('failed to signup')
