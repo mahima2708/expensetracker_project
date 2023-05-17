@@ -35,7 +35,7 @@ exports.finduser= async(req,res,next)=>{
                 }
               });
         if(!emailCheck){
-            res.status(200).json({newdataEntry:"User not found redirect to sign up page"})
+            res.status(404).json({newdataEntry:"User not found redirect to sign up page"})
         }
         else{
             const entry = await table.findOne({
@@ -45,7 +45,7 @@ exports.finduser= async(req,res,next)=>{
                 }
               });
         if (!entry) {
-            res.status(200).json({newdataEntry:"Password is not matching"})
+            res.status(401).json({newdataEntry:"Password is not matching"})
            // return;
               }
         else 
