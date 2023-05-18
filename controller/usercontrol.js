@@ -1,9 +1,15 @@
 const path = require('path');
 const express = require('express');
 const table= require('../models/user');
+const bcrypt = require('bcrypt');
+
+exports.loginsend=(req,res,next)=>{
+  const file= path.join(__dirname,'../view/loginpage.html');
+  res.sendFile(file);
+}
 
 exports.postfile= (req,res,next)=>{
-    const filepath = path.join(__dirname,'../view/loginpage.html');
+    const filepath = path.join(__dirname,'../view/signup.html');
     res.sendFile(filepath);
 }
 
@@ -13,19 +19,22 @@ exports.adduser= async(req,res,next)=>{
     const name = req.body.username;
     const email= req.body.email;
     const password = req.body.password;
-    const data = await table.create({
+    const saltrounds=10;
+    bcrypt.hash (password, saltrounds , async(err,hash)=>{
+      const data = await table.create({
         name:name,
         emailid:email,
-        password:password
+        password:hash
     });
     res.status(200).json({newdata: data})
+    })   
 }
 catch(err){
 console.log(err);
 }
 }
 
-exports.finduser= async(req,res,next)=>{
+exports.login= async(req,res,next)=>{
         try {
             const email= req.body.email;
             const password= req.body.password;
@@ -34,9 +43,11 @@ exports.finduser= async(req,res,next)=>{
                   emailid: email
                 }
               });
+              console.log("####",emailCheck.password);
         if(!emailCheck){
-            res.status(404).json({newdataEntry:"User not found redirect to sign up page"})
+            res.status(404).json({success:false, message:"User not found"})
         }
+
         else{
             const entry = await table.findOne({
                 where: {
@@ -44,14 +55,18 @@ exports.finduser= async(req,res,next)=>{
                   password: password
                 }
               });
-        if (!entry) {
-            res.status(401).json({newdataEntry:"Password is not matching"})
-           // return;
-              }
-        else 
-              {
-                res.status(200).json({newdataEntry: "user registered"})
-              }
+             bcrypt.compare( password,emailCheck.password, (err,result)=>{
+              console.log("#$#$#", result);
+              if (result==true) {
+                 res.status(200).json({success: true , message:"User logged in successfully"})
+               // return;
+                  }
+            else 
+                  {
+                    res.status(401).json({success: false , message: "Password incorrect"})
+                  }
+             })
+       
         }
           
         } catch (error) {

@@ -47,7 +47,7 @@
             }
             const response = await axios.post('http://localhost:3000/signup',signupDetails)
             if(response.status=== 200){
-                window.location.href = "./view/loginpage.html"
+            window.location.href = "./view/loginpage.html"
             }
             else{
                 throw new Error('failed to signup')
@@ -58,6 +58,14 @@
             }
 
         }
+       
+
+
+
+
+
+
+
     </script>
 </body>
 </html>

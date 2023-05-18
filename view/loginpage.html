@@ -37,20 +37,16 @@
                         email: event.target.form.email.value,
                         password: event.target.form.password.value
                     }
-                    const response = await axios.post('http://localhost:3000/login',login).then((response)=>{
+                    const res = await axios.post('http://localhost:3000/login',login).then((response)=>{
                     var value = document.getElementById("Block");
-                    if(response.data.newdataEntry==="User not found redirect to sign up page"){
-                        value.innerHTML= "Email not registered"
-                    }
-                    else if(response.data.newdataEntry==="Password is not matching"){
-                        value.innerHTML= "Password incorrect"
-                    }
-                    else {
+                    
+                    if(response.status==200)
                         console.log("user login successful");
-                    }
-                         
                     })
+
                     . catch((err)=>{
+                        var val = document.getElementById("Block");
+                       val.innerHTML= err.response.data.message;
                         document.body.innerHTML += `<div style="colour:red;">${err}</div>`;
                     })
         
