@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>document</title>
+</head>
+<body>
+    <nav class="bg-cyan-800 h-10 ">
+        <h1 class="bg-cyan-900 text-slate-50 text-center h-8">User Expenses</h1>
+      </nav>
+<div class="bg-blue-300 h-auto flex flex-col items-center">
+    <form class="bg-teal-800 h-72 m justify-center inline-block mb-4">
+            <div class="space-x-10 py-5 px-4">
+                <label for="cost" name="cost">Price</label>
+                <input class="rounded-lg" type="text" id="cost" name= "cost"> 
+            </div>
+            <div class="space-x-1 py-5 px-4">
+                <label for="description" name="description">Description</label>
+                <input class="rounded-lg"type="text" id="description" name="description">
+            </div>
+            <div class="space-x-9 py-5 px-4">
+                <label for="category" name="category">Category</label>
+                <select class="rounded-lg" name="category" id="category" class ="form-control">
+                    <option value="none"> </option>
+                    <option value="clothing">Clothes</option>
+                    <option value="accessories">Accessories</option>
+                    <option value="electronics">Electronics</option>
+                    <option value="grocery">Grocery</option>
+                    <option value="selfcare">Skim&haircare</option>
+                    <option value="food">Others</option>
+                    <option value="travel">Travel</option>
+                  </select>
+            </div>
+            <div class="text-center mx-auto py-4 w-36 rounded-xl">
+                <button class="bg-slate-500 text-red-100 w-36 rounded-xl hover:bg-blue-600" onclick="addexpense(event)">AddExpense</button>
+            </div>
+        </form>
+        
+            <ul id="list"></ul>
+        
+    </div>
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+         async function addexpense(event){
+            try{
+                event.preventDefault()
+                //console.log(event.target.form.price.value);
+                const details={
+                    price:event.target.form.cost.value,
+                    description: event.target.form.description.value,
+                    category: event.target.form.category.value
+                }
+                const data = await axios.post('http://localhost:3000/expense',details)
+                    if(data.status===200){
+                      showOnScreen(details)
+                    }
+            }
+            catch(err){
+                console.log(err);
+            }
+        }
+
+        function showOnScreen(data){
+            console.log("###",data);
+            user = {
+                id:'',
+                price:'',
+                description:'',
+                category:''
+            }
+            document.getElementById('cost').value="";
+            document.getElementById('description').value="";
+            document.getElementById('category').value="";
+
+      const firstNode = document.getElementById('list');
+      const inputData= `<li id=${data.id}> ${data.price} - ${data.description} - ${data.category} ====>
+                          <button class="bg-slate-500 border text-red-100 w-36 rounded-xl hover:bg-blue-600 mb-2" onclick="deleteUser('${data.id}')">Delete user</button>
+                             </li>`
+       
+  firstNode.innerHTML = firstNode.innerHTML + inputData; 
+        }
+
+         window.addEventListener('DOMContentLoaded', ()=>{
+    axios.get("http://localhost:3000/data").then((response)=>{
+   for(var i =0;i<response.data.newentry.length;i++){
+    showOnScreen(response.data.newentry[i])
+   }
+
+    }).catch(err=>console.log(err))
+  })
+
+
+    function deleteUser(id){
+        console.log(id);
+       axios.delete(`http://localhost:3000/delete/${id}`)
+          removeuserfromScreen(id);
+
+    }
+
+    function removeuserfromScreen(listid){
+        const list= document.getElementById('list');
+        const deletelist = document.getElementById(listid);
+        console.log("%%", deletelist);
+            list.removeChild(deletelist)
+    }
+        
+
+    </script>
+    
+</body>
+</html>
