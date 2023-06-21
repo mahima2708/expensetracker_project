@@ -113,7 +113,7 @@
             const token= localStorage.getItem('token');
            await axios.get("http://localhost:3000/data", {headers: {"Authorisation": token}}).then(async(response)=>{
            
-            console.log("##################",response.data);
+            // console.log("##################",response.data);
             if(response.data.ispremiumuser=== true){
         
             premiumFeatures();

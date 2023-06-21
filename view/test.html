@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Include Tailwind CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <title>ExpenseTracker</title>
+</head>
+<body>
+  <nav class="bg-cyan-900 h-16 flex justify-between items-center">
+    <!-- <h1 class="bg-cyan-900 text-slate-50 text-center h-8 mt-3 text-lg mr-3">User Expenses</h1> -->
+    <div class="relative">
+      <button id="menuBtn" class="h-6 border text-slate-50 w-36 rounded-xl hover:bg-blue-600" onclick="showMenu(event)">Menu</button>
+
+      <div id="menuContainer" class="hidden absolute top-12 left-10 w-80 bg-white rounded-lg shadow-lg">
+       
+        <button id="dailyexpense" class="block w-full text-left px-4 py-2 hover:bg-gray-200" onclick="dayTodayExpenses(event,this.id)" >Day-to-Day Expenses</button>
+        <button id="monthlyExpense" class="block w-full text-left px-4 py-2 hover:bg-gray-200" onclick="monthlyexpenses(event,this.id)" >Month-wise Expenses</button>
+        <button id = "yearlyexpenses" class="block w-full text-left px-4 py-2 hover:bg-gray-200" onclick="yearlyExpenses(event,this.id)"  >Yearly Expenses</button>
+        <button class="block w-full text-left px-4 py-2 hover:bg-gray-200" onclick="download(event)" id="download-button" disabled>Download</button>
+          <button class="block w-36 text-left rounded-xl px-4 py-2 hover:bg-blue-600" id="premium" name="premium">Buy Premium</button>
+         
+          <button class="block w-36  text-left rounded-xl px-4 py-2 hover:bg-blue-600">Logout</button>
+          
+      </div>
+    </div>
+    
+  </nav>
+  <div class=" bg-slate-50 h-screen w-full">
+
+  <div id = "dailyExpenses" class="flex justify-center items-center">
+    <button id="prevDateBtn" class="py-2 px-4 bg-blue-500 text-white rounded-lg">&lt;</button>
+    <h2 id="dateDisplay" class="text-2xl font-bold"></h2>
+    <button id="nextDateBtn" class="py-2 px-4 bg-blue-500 text-white rounded-lg">&gt;</button>
+  </div>
+
+  <div id="monthlyexpenses"  class="flex justify-center items-center "  style="display: none;" >
+    <button id="prevMonthBtn" class="py-2 px-4 bg-blue-500 text-white rounded-lg">&lt;</button>
+    <h2 id="monthDisplay" class="text-2xl font-bold"></h2>
+    <button id="nextMonthBtn" class="py-2 px-4 bg-blue-500 text-white rounded-lg">&gt;</button>
+  </div>
+
+  <div id="Yearly"  class="flex justify-center items-center "  style="display: none;" >
+    <button id="prevyearBtn" class="py-2 px-4 bg-blue-500 text-white rounded-lg">&lt;</button>
+    <h2 id="yearDisplay" class="text-2xl font-bold"></h2>
+    <button id="nextyearBtn" class="py-2 px-4 bg-blue-500 text-white rounded-lg">&gt;</button>
+  </div>
+
+  <button id="showFormBtn" class="fixed bottom-4 right-4 p-4 bg-blue-500 text-white rounded-full shadow-lg" onclick="showForm(event)">Show Form</button>
+
+  <div id="formContainer" class="hidden fixed bottom-12 right-1 p-2 bg-white rounded-lg ">
+    <form class="bg-teal-200 h-72 m justify-center inline-block mb-8 p-4 rounded-md">
+      <div class="space-x-10 py-5 px-4">
+          <label for="cost" name="cost">Price</label>
+          <input class="rounded-lg bg-gray-400" type="text" id="cost" name="cost"> 
+      </div>
+      <div class="space-x-1 py-5 px-4">
+          <label for="description" name="description">Description</label>
+          <input class="rounded-lg bg-gray-400" type="text" id="description" name="description">
+      </div>
+      <div class="space-x-9 py-5 px-4">
+          <label for="category" name="category">Category</label>
+          <select class="rounded-lg bg-gray-400" name="category" id="category" class="form-control">
+              <option value="none"> </option>
+              <option value="clothing">Clothes</option>
+              <option value="accessories">Accessories</option>
+              <option value="electronics">Electronics</option>
+              <option value="grocery">Grocery</option>
+              <option value="selfcare">Skim&haircare</option>
+              <option value="food">Others</option>
+              <option value="travel">Travel</option>
+            </select>
+      </div>
+      <div class="text-center mx-auto py-4 flex justify-between" id="SubmitButton">
+          <!-- <button class="bg-cyan-950 text-red-100 w-35 rounded-xl hover:bg-blue-600 items-center ml-4">Add Expense</button> -->
+          <button class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600" onclick="addexpense(event)">Add Expense</button>
+        </div>
+      </div>
+    </form>
+      
+          <ul id="list"></ul>
+
+          <ul id="leaders"></ul>
+
+  <div id="pagination" class="fixed bottom-4 left-0 right-0 flex justify-center p-4"></div>
+  </div>
+
+
+  <!-- Include JavaScript for handling button click event -->
+  <script src="https://cdn.tailwindcss.com"></script>  
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <script src="expenses.js" ></script>
+   
+        
+</body>
+</html>

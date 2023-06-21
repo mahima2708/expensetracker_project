@@ -5,6 +5,7 @@ const expensetable= require('../models/expense');
 const bcrypt = require('bcrypt');
 const token= require('jsonwebtoken');
 const sequel = require('../util/userdatabase')
+const { Op } = require('sequelize');
 
 exports.loginsend=(req,res,next)=>{
   const file= path.join(__dirname,'../view/loginpage.html');
@@ -16,7 +17,7 @@ exports.postfile= (req,res,next)=>{
     res.sendFile(filepath);
 }
 exports.expensepagesend=(req,res,next)=>{
-  const expensefile= path.join(__dirname,'../view/expensepage.html');
+  const expensefile= path.join(__dirname,'../view/test.html');
   res.sendFile(expensefile);
 }
 exports.recoverPage=(req,res,next)=>{
@@ -90,7 +91,7 @@ exports.login= async(req,res,next)=>{
       
       
 exports.addexpense= async(req,res,next)=>{
-  console.log("***",req.body)
+  //console.log("***",req.param)
   const t = await sequel.transaction();
         try{
           const idval= req.user.id;
@@ -127,23 +128,85 @@ exports.addexpense= async(req,res,next)=>{
       console.log(err);
       }
       }
+      const list_perpage = 3;
 
       exports.getdata= async (req,res,next)=>{
-        console.log("***")
+
+        //   where: {
+        //     createdAt: {
+        //       [Op.between]: [startdate, enddate]
+        //     }
+        //   }
+        // })
+        const dateString = req.query.date;
+        const dateObj = new Date(dateString);
+        const date = dateObj.toISOString().split('T')[0];
+        console.log("Date:", date);
+        const dateToFetch = date;
+
+        const startTime = new Date(dateToFetch);
+        const endTime = new Date(dateToFetch);
+        endTime.setDate(endTime.getDate() + 1); 
+        console.log("@#@#@#", startTime );
+        console.log("@@@", endTime );
+
         const ordertable = await table.findOne({where: {id: req.user.id}})
-        
-       await expensetable.findAll({where :{userId: req.user.id}}).then((response)=>{
-        const sqldata=[];
-        response.forEach((item)=>{
-            sqldata.push({
-                id:item.id,
-                price:item.price,
-                description:item.description,
-                category:item.category,  
-            })
-          
+        const totalExpenditure = await expensetable.sum('price',{
+          where: {
+            userId: req.user.id,
+            createdAt: {
+              [Op.gte]: startTime,
+              [Op.lte]: endTime
+            }
+          }
         })
-        res.status(201).json({newentry:sqldata, ispremiumuser: ordertable.ispremiumuser});
+
+        const page = +req.query.page || 1;
+        let totalList;
+        await expensetable.count({
+          where: {
+            userId: req.user.id,
+           createdAt: {
+              [Op.gte]: startTime,
+              [Op.lte]: endTime
+            }
+          }
+        }).then((total) =>{
+          totalList = total;
+          return expensetable.findAll({
+            offset: (page - 1) * list_perpage,
+            limit: list_perpage,
+            where :
+            {userId: req.user.id, 
+              createdAt: {
+                [Op.gte]: startTime,
+                [Op.lte]: endTime
+              }}}).then((response)=>{
+                console.log("*&**&",response)
+                console.log("@@@ total list", totalList);
+            const sqldata=[];
+            response.forEach((item)=>{
+                sqldata.push({
+                    id:item.id,
+                    price:item.price,
+                    description:item.description,
+                    category:item.category,  
+                })
+                
+              
+            }) 
+            res.status(201).json({
+              newentry:sqldata,
+               ispremiumuser: ordertable.ispremiumuser, 
+               totalExpenditure:totalExpenditure,
+               currentPage: page,
+               hasNextPage: list_perpage*page < totalList,
+               nextPage: page + 1,
+               hasPreviousPage: page >1,
+               previousPage: page-1,
+               lastPage: Math.ceil(totalList/list_perpage)
+              });
+        })
         }).catch((error)=>{
             res.status(404).json({error:error});
         });
@@ -187,6 +250,155 @@ exports.addexpense= async(req,res,next)=>{
         console.log(err);
         res.status(500).json({success:true, message:'failed'});
        })
+    }
+
+    exports.getmonthlyData = async (req,res,next)=>{
+      console.log("request", req.query.month);
+      const test = req.query.month;
+      const Month = test.split('/')[0];
+      const year = test.split('/')[1];
+      // const count = await expensetable.count()
+      // .then((total)=>{
+      //   totalList = total;
+      // })
+      
+      const startdate = new Date(`${year}-${Month}-01`);
+      const enddate = new Date(`${year}-${Month}-31`);
+
+      const total_expense = await expensetable.sum('price', {
+        where: {
+          userId: req.user.id,
+          createdAt: {
+            [Op.between]: [startdate, enddate]
+          }
+        }
+      })
+      const page = +req.query.page || 1;
+      let totalList;
+      await expensetable.count({
+        where :{
+          userId: req.user.id,
+          createdAt: {
+            [Op.between]: [startdate, enddate]
+          }
+        }
+      }).then((total) =>{
+        totalList = total;
+      return expensetable.findAll({
+        offset: (page - 1) * list_perpage,
+        limit: list_perpage,
+        where: {
+          userId: req.user.id,
+          createdAt: {
+            [Op.between]: [startdate, enddate]
+          }
+        }
+      })
+    }).then((response) =>{
+        console.log("responseeeee",response);
+        const monthwisedata=[];
+        response.forEach((item)=>{
+            monthwisedata.push({
+                id:item.id,
+                price:item.price,
+                description:item.description,
+                category:item.category,  
+            })
+          
+        })
+        console.log("*****total list***",totalList)
+        res.status(201).json({
+          newentry:monthwisedata, 
+           total_expense: total_expense,
+           currentPage: page,
+           hasNextPage: list_perpage*page < totalList,
+           nextPage: page + 1,
+           hasPreviousPage: page >1,
+           previousPage: page-1,
+           lastPage: Math.ceil(totalList/list_perpage)
+          });
+       
+
+      }).catch((err)=>{
+        throw new Error(err);
+      })
+
+
+    }
+
+    exports.getyearlyData = async(req,res,next)=>{
+      console.log("request", req.query.year);
+      const year = req.query.year;
+      
+      const startdate = new Date(`${year}-01-01`);
+      const enddate = new Date(`${year}-12-31`);
+
+      const yearlyExpenditure = await expensetable.sum('price', {
+        where: {
+          userId: req.user.id,
+          createdAt: {
+            [Op.between]: [startdate, enddate]
+          }
+        }
+      })
+
+      // const count = await expensetable.count({
+      //   where: {
+      //     createdAt: {
+      //       [Op.between]: [startdate, enddate]
+      //     }
+      //   }
+      // })
+      const page = +req.query.page || 1;
+      let totalList;
+      await expensetable.count({
+        where: {
+          userId: req.user.id,
+          createdAt: {
+            [Op.between]: [startdate, enddate]
+          }
+        }
+
+      }).then((total) =>{
+        totalList = total;
+      
+      return expensetable.findAll({
+        offset: (page - 1) * list_perpage,
+        limit: list_perpage,
+        where: {
+          userId: req.user.id,
+          createdAt: {
+            [Op.between]: [startdate, enddate]
+          }
+        }
+      })
+    }).then((response) =>{
+        console.log("responseeeee",response);
+        const yearwisedata=[];
+        response.forEach((item)=>{
+            yearwisedata.push({
+                id:item.id,
+                price:item.price,
+                description:item.description,
+                category:item.category,  
+            })
+          
+        })
+        res.status(201).json({
+          newentry:yearwisedata, 
+           yearlyExpenditure : yearlyExpenditure ,
+           currentPage: page,
+           hasNextPage: list_perpage*page < totalList,
+           nextPage: page + 1,
+           hasPreviousPage: page >1,
+           previousPage: page-1,
+           lastPage: Math.ceil(totalList/list_perpage)
+          });
+
+      }).catch((err)=>{
+        throw new Error(err);
+      })
+
     }
 
 

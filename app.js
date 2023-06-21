@@ -16,6 +16,8 @@ const Order = require('./models/orders');
 const forgotpassword = require('./models/forgotpassword');
 const DownloadedFiles = require('./models/downloadedFiles');
 
+app.use(express.static(path.join(__dirname, 'view')));
+
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use('/', userRouter);
