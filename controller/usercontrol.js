@@ -128,8 +128,7 @@ exports.addexpense= async(req,res,next)=>{
       console.log(err);
       }
       }
-      const list_perpage = 3;
-
+     
       exports.getdata= async (req,res,next)=>{
 
         //   where: {
@@ -138,6 +137,10 @@ exports.addexpense= async(req,res,next)=>{
         //     }
         //   }
         // })
+        const list_perpage = req.query.listperPage;
+        const num = parseInt(list_perpage);
+
+        console.log("request from frontend", req.query)
         const dateString = req.query.date;
         const dateObj = new Date(dateString);
         const date = dateObj.toISOString().split('T')[0];
@@ -174,8 +177,8 @@ exports.addexpense= async(req,res,next)=>{
         }).then((total) =>{
           totalList = total;
           return expensetable.findAll({
-            offset: (page - 1) * list_perpage,
-            limit: list_perpage,
+            offset: (page - 1) * num,
+            limit: num,
             where :
             {userId: req.user.id, 
               createdAt: {
@@ -200,11 +203,11 @@ exports.addexpense= async(req,res,next)=>{
                ispremiumuser: ordertable.ispremiumuser, 
                totalExpenditure:totalExpenditure,
                currentPage: page,
-               hasNextPage: list_perpage*page < totalList,
+               hasNextPage: num*page < totalList,
                nextPage: page + 1,
                hasPreviousPage: page >1,
                previousPage: page-1,
-               lastPage: Math.ceil(totalList/list_perpage)
+               lastPage: Math.ceil(totalList/num)
               });
         })
         }).catch((error)=>{
@@ -255,6 +258,8 @@ exports.addexpense= async(req,res,next)=>{
     exports.getmonthlyData = async (req,res,next)=>{
       console.log("request", req.query.month);
       const test = req.query.month;
+      const list_perpage = req.query.noofrows
+      const num = parseInt(list_perpage);
       const Month = test.split('/')[0];
       const year = test.split('/')[1];
       // const count = await expensetable.count()
@@ -285,8 +290,8 @@ exports.addexpense= async(req,res,next)=>{
       }).then((total) =>{
         totalList = total;
       return expensetable.findAll({
-        offset: (page - 1) * list_perpage,
-        limit: list_perpage,
+        offset: (page - 1) * num,
+        limit: num,
         where: {
           userId: req.user.id,
           createdAt: {
@@ -311,11 +316,11 @@ exports.addexpense= async(req,res,next)=>{
           newentry:monthwisedata, 
            total_expense: total_expense,
            currentPage: page,
-           hasNextPage: list_perpage*page < totalList,
+           hasNextPage: num*page < totalList,
            nextPage: page + 1,
            hasPreviousPage: page >1,
            previousPage: page-1,
-           lastPage: Math.ceil(totalList/list_perpage)
+           lastPage: Math.ceil(totalList/num)
           });
        
 
@@ -341,14 +346,8 @@ exports.addexpense= async(req,res,next)=>{
           }
         }
       })
-
-      // const count = await expensetable.count({
-      //   where: {
-      //     createdAt: {
-      //       [Op.between]: [startdate, enddate]
-      //     }
-      //   }
-      // })
+      const list_perpage= req.query.noofRows
+      const num = parseInt(list_perpage);
       const page = +req.query.page || 1;
       let totalList;
       await expensetable.count({
@@ -363,8 +362,8 @@ exports.addexpense= async(req,res,next)=>{
         totalList = total;
       
       return expensetable.findAll({
-        offset: (page - 1) * list_perpage,
-        limit: list_perpage,
+        offset: (page - 1) * num,
+        limit: num,
         where: {
           userId: req.user.id,
           createdAt: {
@@ -388,11 +387,11 @@ exports.addexpense= async(req,res,next)=>{
           newentry:yearwisedata, 
            yearlyExpenditure : yearlyExpenditure ,
            currentPage: page,
-           hasNextPage: list_perpage*page < totalList,
+           hasNextPage: num*page < totalList,
            nextPage: page + 1,
            hasPreviousPage: page >1,
            previousPage: page-1,
-           lastPage: Math.ceil(totalList/list_perpage)
+           lastPage: Math.ceil(totalList/num)
           });
 
       }).catch((err)=>{

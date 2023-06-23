@@ -10,10 +10,15 @@ const prevDateBtn = document.getElementById('prevDateBtn');
     const prevyear = document.getElementById('prevyearBtn');
     const nextyear = document.getElementById('nextyearBtn');
     const yearDisplay = document.getElementById('yearDisplay');
-    //const pagination = document.getElementById('pagination');
-    
-     
-    // Define the current date
+   
+    prevDateBtn.addEventListener('click', goToPreviousDate);
+    nextDateBtn.addEventListener('click', goToNextDate);
+
+    prevMonth.addEventListener('click', goToPreviousMonth);
+    nextMonth.addEventListener('click', goToNextMonth);
+
+    prevyear.addEventListener('click', goToPreviousyear);
+    nextyear.addEventListener('click', goToNextyear);
     let currentDate = new Date();
 
     function printCurrentDate() {
@@ -24,14 +29,12 @@ const prevDateBtn = document.getElementById('prevDateBtn');
       printCurrentDate();
 
     // Function to update the date display
-   async function updateDateDisplay(id) {
-    const btnid = id;
-    console.log("Id passed ", btnid);
+   async function updateDateDisplay() {
       const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
       dateDisplay.textContent = currentDate.toLocaleDateString(undefined, options);
       const token = localStorage.getItem('token')
-
-      await axios.get('http://localhost:3000/data', {headers: {"Authorisation": token}, params: {date: currentDate.toISOString()}}).then((response) => {
+      const rowsperpage = localStorage.getItem('rowsbydefault')
+      await axios.get('http://localhost:3000/data', {headers: {"Authorisation": token}, params: {date: currentDate.toISOString(), listperPage: rowsperpage}}).then((response) => {
         
        for(var i=0;i<response.data.newentry.length;i++){
         showOnScreen(response.data.newentry[i])
@@ -70,20 +73,10 @@ const prevDateBtn = document.getElementById('prevDateBtn');
       updateDateDisplay();
     }
 
-    // Add click event listeners to the buttons
-    prevDateBtn.addEventListener('click', goToPreviousDate);
-    nextDateBtn.addEventListener('click', goToNextDate);
-
-    prevMonth.addEventListener('click', goToPreviousMonth);
-    nextMonth.addEventListener('click', goToNextMonth);
-
-    prevyear.addEventListener('click', goToPreviousyear);
-    nextyear.addEventListener('click', goToNextyear);
-
 
     function showForm(event) {
         try{
-            event.preventDefault
+            event.preventDefault()
             var formContainer = document.getElementById('formContainer');
         formContainer.classList.toggle('hidden');
     }
@@ -147,12 +140,12 @@ const prevDateBtn = document.getElementById('prevDateBtn');
         window.addEventListener('DOMContentLoaded', async()=>{
             const firstNode = document.getElementById('list');
             firstNode.innerHTML= " ";
-
             const page = 1;
-            
+             localStorage.setItem('rowsbydefault', 5)
+            const listperpage = localStorage.getItem('rowsbydefault');
             const token= localStorage.getItem('token');
             console.log("!!!", currentDate);
-           await axios.get(`http://localhost:3000/data?page=${page}`, {headers: {"Authorisation": token}, params:{date:currentDate}}).then(async(response)=>{
+           await axios.get(`http://localhost:3000/data?page=${page}`, {headers: {"Authorisation": token}, params:{date:currentDate, listperPage:listperpage}}).then(async(response)=>{
            
             console.log("##################",response.data);
             if(response.data.ispremiumuser=== true){
@@ -165,7 +158,7 @@ const prevDateBtn = document.getElementById('prevDateBtn');
               }
               displayPagination(response.data)
 
-    }).catch(err=>console.log(err))
+    }).catch(err=>console.log("error is this",err))
   })
 
   function displayPagination({
@@ -350,8 +343,9 @@ async function updateMonth(){
     test = currentDate.toLocaleDateString(undefined, options1);
     console.log("month val",test);
     const token = localStorage.getItem('token');
+    const rowsperpage = localStorage.getItem('rowsbydefault');
 
-    await axios.get(`http://localhost:3000/monthlydata?page=${page}`, {headers: {"Authorisation": token}, params: {month: test}}).then((response) => {
+    await axios.get(`http://localhost:3000/monthlydata?page=${page}`, {headers: {"Authorisation": token}, params: {month: test}, noofrows: rowsperpage}).then((response) => {
         
 
     console.log("response of request", response);
@@ -443,11 +437,11 @@ function  goToPreviousyear() {
     const page =1;
     const options = { year: 'numeric' };
     yearDisplay.textContent = currentDate.toLocaleDateString(undefined, options);
-  
+    const rowsPerPage = localStorage.getItem('rowsbydefault')
     const year = currentDate.getFullYear();
     const token = localStorage.getItem('token');
   console.log("year", year);
-    await axios.get(`http://localhost:3000/yearlydata?page=${page}`,{ headers: {"Authorisation": token }, params: { year: year }})
+    await axios.get(`http://localhost:3000/yearlydata?page=${page}`,{ headers: {"Authorisation": token }, params: { year: year }, noofRows:rowsPerPage })
       .then((response) => {
         console.log('Response:', response);
         for (var i = 0; i < response.data.newentry.length; i++) {
@@ -547,4 +541,18 @@ function  goToPreviousyear() {
         throw new Error(err);
     })
    }
+
+   const RowsPerPage = document.getElementById('rowPerPage').addEventListener('change', storeTheValue)
+
+   function storeTheValue(event){
+   // event.preventDefault()
+    console.log("selected rows per page",event.target.value)
+    localStorage.setItem('rowsbydefault', event.target.value);
+    const firstNode = document.getElementById('list');
+    firstNode.innerHTML = '';
+
+    updateDateDisplay()
+
+   }
+ 
 
