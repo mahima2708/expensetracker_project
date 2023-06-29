@@ -1,11 +1,10 @@
 const razorpay= require('razorpay')
 require('dotenv').config();
-const dbinfo = require('../util/userdatabase')
 const order = require('../models/orders');
 const Order = require('../models/orders');
-const expenses = require('../models/expense');
-const users = require('../models/user');
-const { Sequelize } = require('sequelize');
+
+
+
 
 exports.purchasepremiumship = async(req,res)=>{
     try{
@@ -73,29 +72,5 @@ console.log(err);
     }
 }
 
-exports.fetcHdata = async (req,res)=>{
-   
-    try {
-        const entry= []
-        const user = await users.findAll({
-            attributes: ['id', 'name', 'total_expense'],
-            order:  [['total_expense','DESC']]
-        });
-        
-        user.forEach(item=>{
-            console.log("**",item)
-            entry.push({
-              id: item.dataValues.id,
-              name: item.dataValues.name,
-              total_price: item.dataValues.total_expense
-            });
-        } )
-        console.log("@#@$#%$^%$^%", entry);
-        res.status(200).json({ entry });
-        
-    } catch (error) {
-        console.log("%%%%%%%%%%%%%%%%",error)
-    }
-  
-}
+
           

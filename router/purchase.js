@@ -5,5 +5,5 @@ const authenticatemiddleware = require('../middleware/auth');
 router.get('/purchasepremiumship', authenticatemiddleware.authorisation, purchasecontroller.purchasepremiumship );
 router.post('/updatetransactionstatus',authenticatemiddleware.authorisation,purchasecontroller.updateTransaction );
 router.post('/updatefailedtransaction',authenticatemiddleware.authorisation,purchasecontroller.updateTransactionstatus );
-router.get('/premiumuserdata',authenticatemiddleware.authorisation,purchasecontroller.fetcHdata);
+
 module.exports= router;

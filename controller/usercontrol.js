@@ -131,14 +131,9 @@ exports.addexpense= async(req,res,next)=>{
      
       exports.getdata= async (req,res,next)=>{
 
-        //   where: {
-        //     createdAt: {
-        //       [Op.between]: [startdate, enddate]
-        //     }
-        //   }
-        // })
         const list_perpage = req.query.listperPage;
         const num = parseInt(list_perpage);
+        console.log("why its NaN", num)
 
         console.log("request from frontend", req.query)
         const dateString = req.query.date;
@@ -149,10 +144,7 @@ exports.addexpense= async(req,res,next)=>{
 
         const startTime = new Date(dateToFetch);
         const endTime = new Date(dateToFetch);
-        endTime.setDate(endTime.getDate() + 1); 
-        console.log("@#@#@#", startTime );
-        console.log("@@@", endTime );
-
+        endTime.setDate(endTime.getDate() + 1);
         const ordertable = await table.findOne({where: {id: req.user.id}})
         const totalExpenditure = await expensetable.sum('price',{
           where: {
@@ -177,7 +169,7 @@ exports.addexpense= async(req,res,next)=>{
         }).then((total) =>{
           totalList = total;
           return expensetable.findAll({
-            offset: (page - 1) * num,
+            offset: ((page - 1) * num),
             limit: num,
             where :
             {userId: req.user.id, 
@@ -185,8 +177,7 @@ exports.addexpense= async(req,res,next)=>{
                 [Op.gte]: startTime,
                 [Op.lte]: endTime
               }}}).then((response)=>{
-                console.log("*&**&",response)
-                console.log("@@@ total list", totalList);
+              //  console.log("*&**&",response)
             const sqldata=[];
             response.forEach((item)=>{
                 sqldata.push({
@@ -256,10 +247,12 @@ exports.addexpense= async(req,res,next)=>{
     }
 
     exports.getmonthlyData = async (req,res,next)=>{
+      console.log("this function is being called")
       console.log("request", req.query.month);
       const test = req.query.month;
-      const list_perpage = req.query.noofrows
+      const list_perpage = req.query.listperPage
       const num = parseInt(list_perpage);
+      console.log("num is %%%",num);
       const Month = test.split('/')[0];
       const year = test.split('/')[1];
       // const count = await expensetable.count()
@@ -269,12 +262,15 @@ exports.addexpense= async(req,res,next)=>{
       
       const startdate = new Date(`${year}-${Month}-01`);
       const enddate = new Date(`${year}-${Month}-31`);
+      console.log("datesssssss", startdate)
+      console.log("datesssssss", enddate)
 
       const total_expense = await expensetable.sum('price', {
         where: {
           userId: req.user.id,
           createdAt: {
-            [Op.between]: [startdate, enddate]
+            [Op.gte]: startdate,
+            [Op.lte]: enddate
           }
         }
       })
@@ -300,7 +296,7 @@ exports.addexpense= async(req,res,next)=>{
         }
       })
     }).then((response) =>{
-        console.log("responseeeee",response);
+        //console.log("responseeeee",response);
         const monthwisedata=[];
         response.forEach((item)=>{
             monthwisedata.push({
@@ -346,7 +342,7 @@ exports.addexpense= async(req,res,next)=>{
           }
         }
       })
-      const list_perpage= req.query.noofRows
+      const list_perpage= req.query.listperPage
       const num = parseInt(list_perpage);
       const page = +req.query.page || 1;
       let totalList;
@@ -358,10 +354,10 @@ exports.addexpense= async(req,res,next)=>{
           }
         }
 
-      }).then((total) =>{
+      }).then(async (total) =>{
         totalList = total;
       
-      return expensetable.findAll({
+       return await expensetable.findAll({
         offset: (page - 1) * num,
         limit: num,
         where: {
@@ -372,7 +368,7 @@ exports.addexpense= async(req,res,next)=>{
         }
       })
     }).then((response) =>{
-        console.log("responseeeee",response);
+        //console.log("responseeeee",response);
         const yearwisedata=[];
         response.forEach((item)=>{
             yearwisedata.push({

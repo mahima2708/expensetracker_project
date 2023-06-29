@@ -1,11 +1,9 @@
-const path = require('path');
-const express = require('express');
-//const token= require('jsonwebtoken');
-const expenses = require('../models/expense');
-const AWS = require('aws-sdk');
+
 const UserServices = require('../services/userservices');
 const S3services = require('../services/s3Services');
 const downloadedUrls = require('../models/downloadedFiles');
+const users = require('../models/user');
+
 
 
 exports.downloadexpenses = async (req,res,next) =>{
@@ -40,4 +38,28 @@ exports.downloadedUrl = async (req,res,next) =>{
     }).catch((error)=>{
         res.status(404).json({error:error});
     });
+}
+
+exports.fetcHdata = async (req,res)=>{
+   
+    try {
+        const entry= []
+        const user = await users.findAll({
+            attributes: ['id', 'name', 'total_expense'],
+            order:  [['total_expense','DESC']]
+        });
+        
+        user.forEach(item=>{
+            entry.push({
+              id: item.dataValues.id,
+              name: item.dataValues.name,
+              total_price: item.dataValues.total_expense
+            });
+        } )
+        res.status(200).json({ entry });
+        
+    } catch (error) {
+       throw new Error(error)
+    }
+  
 }

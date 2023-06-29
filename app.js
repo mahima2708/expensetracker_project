@@ -48,11 +48,14 @@ Order.belongsTo(userlist);
 
 userlist.hasMany(DownloadedFiles);
 DownloadedFiles.belongsTo(userlist)
+
+
+
 app.use((err, req, res, next) => {
-    // Log the error
-    console.error(err);
-    next(err);
-  });
+  // Log the error
+  console.error(err);
+  next(err);
+});
 
 sequel.sync().then(result => {
     app.listen(3000);

@@ -1,7 +1,13 @@
 
 const prevDateBtn = document.getElementById('prevDateBtn');
     const nextDateBtn = document.getElementById('nextDateBtn');
-    const dateDisplay = document.getElementById('dateDisplay');
+    const datedisplay = document.getElementById('date_Display');
+    const h2Elements = document.querySelectorAll('h2');
+
+    var test = "";
+    var year = "";
+    
+
 
     const prevMonth = document.getElementById('prevMonthBtn');
     const nextMonth = document.getElementById('nextMonthBtn');
@@ -23,7 +29,7 @@ const prevDateBtn = document.getElementById('prevDateBtn');
 
     function printCurrentDate() {
         const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        dateDisplay.textContent = currentDate.toLocaleDateString(undefined, options);
+        datedisplay.textContent = currentDate.toLocaleDateString(undefined, options);
 
       }
       printCurrentDate();
@@ -31,22 +37,27 @@ const prevDateBtn = document.getElementById('prevDateBtn');
     // Function to update the date display
    async function updateDateDisplay() {
       const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-      dateDisplay.textContent = currentDate.toLocaleDateString(undefined, options);
+      datedisplay.textContent = currentDate.toLocaleDateString(undefined, options);
+      console.log("343533 the current display ", datedisplay.id)
       const token = localStorage.getItem('token')
       const rowsperpage = localStorage.getItem('rowsbydefault')
       await axios.get('http://localhost:3000/data', {headers: {"Authorisation": token}, params: {date: currentDate.toISOString(), listperPage: rowsperpage}}).then((response) => {
-        
+      
        for(var i=0;i<response.data.newentry.length;i++){
         showOnScreen(response.data.newentry[i])
        }
       
        const totalExpenditureLi = document.createElement('li');
+       totalExpenditureLi.style.fontWeight = "bold"
+       totalExpenditureLi.style.border = "1px solid black";
+       totalExpenditureLi.style.marginTop = "10px";
+       totalExpenditureLi.style.color = "white"
        totalExpenditureLi.textContent = `Total Expenditure: ${response.data.totalExpenditure}`;
  
       
        const ulElement = document.getElementById('list'); 
        ulElement.appendChild(totalExpenditureLi);
-       displayPagination(response.data,btnid)
+       displayPagination(response.data)
        
       }).catch((err)=>{
         throw new Error(err);
@@ -130,7 +141,7 @@ const prevDateBtn = document.getElementById('prevDateBtn');
             document.getElementById('category').value="";
 
       const firstNode = document.getElementById('list');
-      const inputData= `<li id=${data.id}> ${data.price} - ${data.description} - ${data.category} ====>
+      const inputData= `<li class = "mr-4 text-white font-semibold" id=${data.id}> ${data.price} - ${data.description} - ${data.category} ====>
                           <button class="bg-slate-500 border text-red-100 w-36 rounded-xl hover:bg-blue-600 mb-2" onclick="deleteUser('${data.id}', '${data.price}')">Delete user</button>
                              </li>`
        
@@ -141,7 +152,7 @@ const prevDateBtn = document.getElementById('prevDateBtn');
             const firstNode = document.getElementById('list');
             firstNode.innerHTML= " ";
             const page = 1;
-             localStorage.setItem('rowsbydefault', 5)
+             localStorage.setItem('rowsbydefault', 3)
             const listperpage = localStorage.getItem('rowsbydefault');
             const token= localStorage.getItem('token');
             console.log("!!!", currentDate);
@@ -195,9 +206,6 @@ const prevDateBtn = document.getElementById('prevDateBtn');
       btn3.textContent = nextPage;
       btn3.classList.add('mr-2')
       btn3.style.border = "2px solid black"
-
-
-
       btn3.addEventListener('click', () => getlist(nextPage));
       paginationContainer.appendChild(btn3);
     }
@@ -208,12 +216,27 @@ const prevDateBtn = document.getElementById('prevDateBtn');
     listContainer.innerHTML = '';
     const paginationContainer = document.getElementById('pagination');
     paginationContainer.innerHTML = '';
+    const dailyExpensesDiv = document.getElementById('dailyExpenses');
+const monthlyExpensesDiv = document.getElementById('monthlyexpenses');
+const yearlyExpensesDiv = document.getElementById('Yearly');
+
+// Check the visibility of the div elements
+const isDailyVisible = window.getComputedStyle(dailyExpensesDiv).display !== 'none';
+const isMonthlyVisible = window.getComputedStyle(monthlyExpensesDiv).display !== 'none';
+const isYearlyVisible = window.getComputedStyle(yearlyExpensesDiv).display !== 'none';
+
+// Determine the display mode
+
   
     const token = localStorage.getItem('token');
-    axios
+    const listperPage = localStorage.getItem('rowsbydefault');
+    let displayMode;
+if (isDailyVisible) {
+  displayMode = 'day-wise';
+  axios
       .get(`http://localhost:3000/data?page=${page}`, {
         headers: { "Authorisation": token },
-        params: { date: currentDate },
+        params: { date: currentDate ,  listperPage:listperPage }
       })
       .then(async (response) => {
         console.log("##################", response.data);
@@ -223,6 +246,39 @@ const prevDateBtn = document.getElementById('prevDateBtn');
         }
         displayPagination(response.data);
       });
+  
+} else if (isMonthlyVisible) {
+  displayMode = 'month-wise';
+  axios
+      .get(`http://localhost:3000/monthlydata?page=${page}`, {
+        headers: { "Authorisation": token },
+        params: {month: test,  listperPage:listperPage }
+      })
+      .then(async (response) => {
+        console.log("##################", response.data);
+  
+        for (var i = 0; i < response.data.newentry.length; i++) {
+          showOnScreen(response.data.newentry[i]);
+        }
+        displayPagination(response.data);
+      });
+} else if (isYearlyVisible) {
+  displayMode = 'year-wise';
+  axios
+  .get(`http://localhost:3000/yearlydata?page=${page}`, {
+    headers: { "Authorisation": token },
+    params: {year: year ,  listperPage:listperPage }
+  })
+  .then(async (response) => {
+    console.log("##################", response.data);
+
+    for (var i = 0; i < response.data.newentry.length; i++) {
+      showOnScreen(response.data.newentry[i]);
+    }
+    displayPagination(response.data);
+  });
+}
+    
   }
 
   async function deleteUser(id, price){
@@ -339,13 +395,14 @@ async function updateMonth(){
     monthDisplay.textContent = currentDate.toLocaleDateString(undefined, options);
 
     const options1 = { year: 'numeric', month: 'numeric' };
-    var test = monthDisplay.textContent
+     test = monthDisplay.textContent
     test = currentDate.toLocaleDateString(undefined, options1);
     console.log("month val",test);
     const token = localStorage.getItem('token');
     const rowsperpage = localStorage.getItem('rowsbydefault');
+    console.log("localstoragetaken", rowsperpage);
 
-    await axios.get(`http://localhost:3000/monthlydata?page=${page}`, {headers: {"Authorisation": token}, params: {month: test}, noofrows: rowsperpage}).then((response) => {
+    await axios.get(`http://localhost:3000/monthlydata?page=${page}`, {headers: {"Authorisation": token}, params: {month: test, listperPage: rowsperpage}}).then((response) => {
         
 
     console.log("response of request", response);
@@ -354,6 +411,10 @@ async function updateMonth(){
 
        }
        const totalExpenditureLi = document.createElement('li');
+       totalExpenditureLi.style.fontWeight = "bold"
+       totalExpenditureLi.style.border = "1px solid black";
+       totalExpenditureLi.style.marginTop = "10px";
+       totalExpenditureLi.style.color = "white"
        totalExpenditureLi.textContent = `Total Expenditure: ${response.data.total_expense}`;
  
       
@@ -368,10 +429,8 @@ async function updateMonth(){
       )
 
 }
-function dayTodayExpenses(event,id){
+function dayTodayExpenses(event){
     event.preventDefault()
-    const btnid = id;
-    //console.log("btn id is", btnid);
     const firstNode = document.getElementById('list');
     firstNode.innerHTML = '';
     const divElement = document.getElementById('dailyExpenses')
@@ -385,7 +444,7 @@ function dayTodayExpenses(event,id){
     monthlyexpenses.classList.add('hidden');
     monthlyexpenses.style.display = 'none';
 
-    updateDateDisplay(btnid);
+    updateDateDisplay();
 
 
 
@@ -438,16 +497,20 @@ function  goToPreviousyear() {
     const options = { year: 'numeric' };
     yearDisplay.textContent = currentDate.toLocaleDateString(undefined, options);
     const rowsPerPage = localStorage.getItem('rowsbydefault')
-    const year = currentDate.getFullYear();
+     year = currentDate.getFullYear();
     const token = localStorage.getItem('token');
   console.log("year", year);
-    await axios.get(`http://localhost:3000/yearlydata?page=${page}`,{ headers: {"Authorisation": token }, params: { year: year }, noofRows:rowsPerPage })
+    await axios.get(`http://localhost:3000/yearlydata?page=${page}`,{ headers: {"Authorisation": token }, params: { year: year ,  listperPage:rowsPerPage }})
       .then((response) => {
         console.log('Response:', response);
         for (var i = 0; i < response.data.newentry.length; i++) {
           showOnScreen(response.data.newentry[i]);
         }
         const totalExpenditureLi = document.createElement('li');
+        totalExpenditureLi.style.fontWeight = "bold"
+       totalExpenditureLi.style.border = "1px solid black";
+       totalExpenditureLi.style.marginTop = "10px";
+       totalExpenditureLi.style.color = "white"
         totalExpenditureLi.textContent = `Total Expenditure: ${response.data.yearlyExpenditure}`;
   
         const ulElement = document.getElementById('list'); 
@@ -472,7 +535,7 @@ function  goToPreviousyear() {
             userbar.parentNode.replaceChild(span,userbar)
 
             const btn = document.createElement('button');
-            btn.className = 'bg-slate-500 text-red-100 w-30 rounded-xl hover:bg-blue-600 mr-2';
+            btn.className = ' text-white font-semibold w-36 h-8 rounded-lg bg-fuchsia-800  hover:bg-fuchsia-950 px-3 py-2 ';
             btn.id = 'leaderboard';
 
             const text = document.createTextNode('ShowLeaderboard');
@@ -488,7 +551,7 @@ function  goToPreviousyear() {
             document.getElementById('leaderboard').onclick = async function(e){
                 e.preventDefault()
 
-                const response = await axios.get('http://localhost:3000/purchase/premiumuserdata', {headers: {"Authorisation": token}});
+                const response = await axios.get('http://localhost:3000/premiumfeatures/premiumuserdata', {headers: {"Authorisation": token}});
                 console.log("hello daarlingssss", response);
                 const firstNode = document.getElementById('leaders');
                 
@@ -516,6 +579,7 @@ function  goToPreviousyear() {
    }
 
   async function download(event){
+    event.preventDefault()
     const token = localStorage.getItem('token')
     //console.log("@#@#@#@#",token)
     await axios.get('http://localhost:3000/premiumfeatures/download', { headers: {"Authorisation" : token}})
@@ -528,7 +592,7 @@ function  goToPreviousyear() {
             await axios.get('http://localhost:3000/premiumfeatures/getData', {headers : {"Authorisation": token}})
             .then((response)=>{
                 console.log("&*&*&*&*", response.data.newentry[0]);
-                showOnScreen(response.data.newentry[0].fileUrl)
+                //showOnScreen(response.data.newentry[0].fileUrl)
 
             })
             
@@ -550,9 +614,39 @@ function  goToPreviousyear() {
     localStorage.setItem('rowsbydefault', event.target.value);
     const firstNode = document.getElementById('list');
     firstNode.innerHTML = '';
+    
+const dailyExpensesDiv = document.getElementById('dailyExpenses');
+const monthlyExpensesDiv = document.getElementById('monthlyexpenses');
+const yearlyExpensesDiv = document.getElementById('Yearly');
 
-    updateDateDisplay()
+// Check the visibility of the div elements
+const isDailyVisible = window.getComputedStyle(dailyExpensesDiv).display !== 'none';
+const isMonthlyVisible = window.getComputedStyle(monthlyExpensesDiv).display !== 'none';
+const isYearlyVisible = window.getComputedStyle(yearlyExpensesDiv).display !== 'none';
+
+// Determine the display mode
+let displayMode;
+if (isDailyVisible) {
+  displayMode = 'day-wise';
+  updateDateDisplay()
+} else if (isMonthlyVisible) {
+  displayMode = 'month-wise';
+  updateMonth()
+} else if (isYearlyVisible) {
+  displayMode = 'year-wise';
+  updateYear()
+}
+   
+// Use the displayMode variable as needed
+console.log("display in the screen", displayMode);
+    
 
    }
+
+    function logout(event){
+      event.preventDefault()
+
+      window.location.href= "loginpage.html";
+    }
  
 
