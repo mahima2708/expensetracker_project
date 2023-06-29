@@ -9,22 +9,22 @@
   <title>ExpenseTracker</title>
 </head>
 <body>
-  <nav class="bg-cyan-900 h-16 flex justify-between items-center">
-    <button id="showFormBtn" class="p-4 bg-blue-500 text-white rounded-full shadow-lg" onclick="showForm(event)">Show Form</button>
+  <nav class="bg-black h-16 flex justify-between items-center">
+    <button id="showFormBtn" class="h-6 border text-slate-50 w-36 rounded-xl hover:bg-blue-600" onclick="showForm(event)">Show Form</button>
 
     <div id="formContainer" class="hidden fixed bottom-12 right-1 p-2 bg-white rounded-lg ">
-      <form class="bg-teal-200 h-72 m justify-center inline-block mb-8 p-4 rounded-md">
-        <div class="space-x-10 py-5 px-4">
+      <form class="bg-white h-72 m justify-center inline-block mb-8 p-4 rounded-md ">
+        <div class="space-x-10 py-3 px-3">
             <label for="cost" name="cost">Price</label>
-            <input class="rounded-lg bg-gray-400" type="text" id="cost" name="cost"> 
+            <input class="w-4/5 border-b border-violet-500 focus:outline-violet-700" type="text" id="cost" name="cost"> 
         </div>
-        <div class="space-x-1 py-5 px-4">
+        <div class="space-x-1 py-3 px-3">
             <label for="description" name="description">Description</label>
-            <input class="rounded-lg bg-gray-400" type="text" id="description" name="description">
+            <input class="w-4/5 border-b border-violet-500 focus:outline-violet-700" type="text" id="description" name="description">
         </div>
-        <div class="space-x-9 py-5 px-4">
+        <div class="space-x-9 py-3 px-4">
             <label for="category" name="category">Category</label>
-            <select class="rounded-lg bg-gray-400" name="category" id="category" class="form-control">
+            <select class="w-4/5 border-b border-violet-500 focus:outline-violet-700"  name="category" id="category" class="form-control">
                 <option value="none"> </option>
                 <option value="clothing">Clothes</option>
                 <option value="accessories">Accessories</option>
@@ -37,7 +37,7 @@
         </div>
         <div class="text-center mx-auto py-4 flex justify-between" id="SubmitButton">
             <!-- <button class="bg-cyan-950 text-red-100 w-35 rounded-xl hover:bg-blue-600 items-center ml-4">Add Expense</button> -->
-            <button class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600" onclick="addexpense(event)">Add Expense</button>
+            <button class=" text-white font-semibold w-36 h-8 mx-3 rounded-lg bg-fuchsia-800  hover:bg-fuchsia-950" onclick="addexpense(event)">Add Expense</button>
           </div>
         </div>
       </form>
@@ -53,17 +53,17 @@
         <button class="block w-full text-left px-4 py-2 hover:bg-gray-200" onclick="download(event)" id="download-button" disabled>Download</button>
           <button class="block w-36 text-left rounded-xl px-4 py-2 hover:bg-blue-600" id="premium" name="premium">Buy Premium</button>
          
-          <button class="block w-36  text-left rounded-xl px-4 py-2 hover:bg-blue-600">Logout</button>
+          <button class="block w-36  text-left rounded-xl px-4 py-2 hover:bg-blue-600" onclick="logout(event)">Logout</button>
           
       </div>
     </div>
     
   </nav>
-  <div class=" bg-slate-50 h-screen w-full">
+  <div class="bg-gradient-to-br from-fuchsia-900 to-blue-900 h-screen w-full">
 
   <div id = "dailyExpenses" class="flex justify-center items-center">
     <button id="prevDateBtn" class="py-2 px-4 bg-blue-500 text-white rounded-lg">&lt;</button>
-    <h2 id="dateDisplay" class="text-2xl font-bold"></h2>
+    <h2 id="date_Display" class="text-2xl font-bold"></h2>
     <button id="nextDateBtn" class="py-2 px-4 bg-blue-500 text-white rounded-lg">&gt;</button>
   </div>
 
@@ -77,25 +77,29 @@
     <button id="prevyearBtn" class="py-2 px-4 bg-blue-500 text-white rounded-lg">&lt;</button>
     <h2 id="yearDisplay" class="text-2xl font-bold"></h2>
     <button id="nextyearBtn" class="py-2 px-4 bg-blue-500 text-white rounded-lg">&gt;</button>
+  </div> 
+      
+  <div class="px-10  my-6 flex justify-center">
+    <ul  id="list"></ul>
+
+    <ul id="leaders"></ul>
+
   </div>
-          <ul id="list"></ul>
-
-          <ul id="leaders"></ul>
-
+         
           <div class="fixed bottom-4 left-0 right-0 flex justify-center">
             <div id="pagination" class="w-64 h-15 p-4"></div>
           </div>
-          <div class="fixed bottom-4 left-0 right-0 flex justify-center mt-4">
-            <div id="noOfRows" class="w-60 h-20 p-4"></div>
-          </div>
-    <label for="listperpage" name="noOfrows">Rows per page: </label>
+
+          <div class="flex justify-center">
+            <label for="listperpage" name="noOfrows">Rows per page: </label>
     <select class="rounded-lg bg-gray-400" name="rowPerPage" id="rowPerPage" class="form-control">
-        <option value="0">0</option>
         <option value="3">3</option>
         <option value="5">5</option>
         <option value="7">7</option>
         <option value="10">10</option>
         
+          </div>
+    
        
       </select>
   </div>

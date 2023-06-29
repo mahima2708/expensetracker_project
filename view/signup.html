@@ -9,31 +9,35 @@
    
 </head>
 <body>
-        <nav class="bg-cyan-800 h-10 flex items-center justify-between">
-            <h1 class="text-slate-50 text-center">Sign Up</h1>
+        <nav class="bg-black h-10 flex items-center justify-between">
+            <h1 class="text-slate-50 text-center">New User Registration</h1>
             <a class="text-slate-50 px-20" href="loginpage.html">Existing User login</a>
           </nav>
     
-    <div class="bg-white h-screen flex justify-center" >
-        <form action="/" method="POST" >
-            <h2 class="text-slate-50 text-center py-4">Enter Details</h2>
-            <h3 id="warningMessage" style="color: red; display: none;">All fields are necessary to fill.</h3>
-            <div class="text-center mx-auto px-6 py-5 space-x-2">
-                <label  for="username">UserName</label>
-                <input type="text" id="username" name="username" required >
-            </div>
-            <div class="text-center mx-auto px-6 py-5 space-x-6">
-                <label for="emailid">E-mail</label>
-                <input type="text" id="emailid" name="email" required >
-            </div>
-              <div class="text-center mx-auto px-6 py-5 space-x-2">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" required >
-            </div>
-            <div class="text-center mx-auto hover:bg-white">
-                <button  onClick="signup(event)">SignUp</button>
-            </div>
-        </form>
+          <div class="w-2/3 bg-gradient-to-r from-fuchsia-400 to-fuchsia-900 h-screen flex">
+            <!-- <div class="w-1/2 bg-slate-500 fixed left-0"></div> -->
+            <div class="w-1/3 bg-white fixed right-0 h-screen">
+            <h1 class="font-bold text-4xl text-center py-4"> Sign Up</h1> 
+            <form  class ="my-10" action="/" method="POST" >  
+                <h3 id="warningMessage" style="color: red; display: none;">All fields are necessary to fill.</h3>
+                <div class="text-center mx-auto px-6 py-5 space-x-2">
+                    <label  class="block text-left m-2"  for="username">UserName</label>
+                    <input class="w-full border-b border-violet-500 focus:outline-none focus:border-violet-700" type="text" placeholder="UserName" id="username" name="username" required >
+                </div>
+                <div class="text-center mx-auto px-6 py-5 space-x-6">
+                    <label  class="block text-left  m-2"  for="emailid">E-mail</label>
+                    <input class="w-full  border-b border-violet-500 focus:outline-none focus:border-violet-700" type="text" placeholder="E-mail" id="emailid" name="email" required >
+                </div>
+                  <div class="text-center mx-auto px-6 py-5 space-x-2">
+                    <label  class="block text-left m-2"  for="password">Password</label>
+                    <input class="w-full  border-b border-violet-500 focus:outline-none focus:border-violet-700" type="password" placeholder="Password" id="password" name="password" required >
+                </div>
+                <div class=" text-center mx-auto m-6">
+                    <button class=" text-white font-semibold w-36 h-10 rounded-lg bg-fuchsia-800  hover:bg-fuchsia-950" onClick="signup(event)">SignUp</button>
+                </div>
+            </form>
+        </div>
+       
         
     </div>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
