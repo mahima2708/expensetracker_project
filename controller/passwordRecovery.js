@@ -47,7 +47,7 @@ transEmailApi
     to : recievers,
     subject: 'Reset Password',
     textContent:'Reset your password via the link provided below.',
-    htmlContent: `<a href ="http://localhost:3000/password/resetpassword/${id}">Reset Password</a>`
+    htmlContent: `<a href ="http://13.127.45.135:3000/password/resetpassword/${id}">Reset Password</a>`
 
 }).then(response=>{
     console.log("!!!!!!!!!!!!!!!",response)

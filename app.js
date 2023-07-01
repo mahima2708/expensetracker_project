@@ -25,6 +25,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use('/', userRouter);
 app.use('/purchase', purchaseRouter);
+
 app.use('/password', passeord);
 app.use('/premiumfeatures', premiumFeatures);
 

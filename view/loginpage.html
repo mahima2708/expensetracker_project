@@ -27,7 +27,9 @@
                     <a class="text-fuchsia-800 px-5 text-sm text-left inline-block" href="recoverPassword.html" >Forgot Password?</a>
                 
                 <div class="text-center mx-auto py-4 w-36 rounded-xl">
-                    <button class=" text-white font-semibold w-36 h-10 rounded-lg bg-fuchsia-800  hover:bg-fuchsia-950" onClick="loginuser(event)">Login</button>
+                    <button 
+                    
+                    onClick="loginuser(event)">Login</button>
                     <!-- <button class="bg-slate-500 text-red-100 w-36 rounded-xl hover:bg-blue-600 mt-2" onClick="forgotpassword(event)">ForgotPassword</button> -->
                 </div>
                 <div class="bg-red-700 font-bold text-zinc-950" id ="Block">
@@ -42,7 +44,7 @@
                         email: event.target.form.email.value,
                         password: event.target.form.password.value
                     }
-                    const res = await axios.post('http://localhost:3000/login',login).then((response)=>{
+                    const res = await axios.post('http://13.127.45.135:3000/login',login).then((response)=>{
                     var value = document.getElementById("Block");
                     console.log("%%$%$%44",response);
 
@@ -64,13 +66,7 @@
         
                 }
 
-                // function forgotpassword(event){
-                //     event.preventDefault()
-
-
-                //     window.location.href="recoverPassword";
-                // }
-
+               
 
             </script>
 </body>

@@ -58,7 +58,7 @@
                 }, 500);
                 return;
             }
-            const response = await axios.post('http://localhost:3000/signup',signupDetails)
+            const response = await axios.post('http://13.127.45.135:3000/signup',signupDetails)
             if(response.status=== 200){
             window.location.href = "loginpage.html"
             }
