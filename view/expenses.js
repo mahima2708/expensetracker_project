@@ -41,7 +41,7 @@ const prevDateBtn = document.getElementById('prevDateBtn');
       console.log("343533 the current display ", datedisplay.id)
       const token = localStorage.getItem('token')
       const rowsperpage = localStorage.getItem('rowsbydefault')
-      await axios.get('http://13.127.45.135:3000/data', {headers: {"Authorisation": token}, params: {date: currentDate.toISOString(), listperPage: rowsperpage}}).then((response) => {
+      await axios.get('http://52.66.121.103:3000/data', {headers: {"Authorisation": token}, params: {date: currentDate.toISOString(), listperPage: rowsperpage}}).then((response) => {
       
        for(var i=0;i<response.data.newentry.length;i++){
         showOnScreen(response.data.newentry[i])
@@ -117,7 +117,7 @@ const prevDateBtn = document.getElementById('prevDateBtn');
                     description: event.target.form.description.value,
                     category: event.target.form.category.value,
                 }
-                const data = await axios.post('http://13.127.45.135:3000/expense', details,{headers: {"Authorisation": token_1}})
+                const data = await axios.post('http://52.66.121.103:3000/expense', details,{headers: {"Authorisation": token_1}})
                 console.log("@#@#@#@##@#@###@#@",data.data.expense);
                     if(data.status===200){
                       showOnScreen(data.data.expense)
@@ -156,7 +156,7 @@ const prevDateBtn = document.getElementById('prevDateBtn');
             const listperpage = localStorage.getItem('rowsbydefault');
             const token= localStorage.getItem('token');
             console.log("!!!", currentDate);
-           await axios.get(`http://13.127.45.135:3000/data?page=${page}`, {headers: {"Authorisation": token}, params:{date:currentDate, listperPage:listperpage}}).then(async(response)=>{
+           await axios.get(`http://52.66.121.103:3000/data?page=${page}`, {headers: {"Authorisation": token}, params:{date:currentDate, listperPage:listperpage}}).then(async(response)=>{
            
             console.log("##################",response.data);
             if(response.data.ispremiumuser=== true){
@@ -234,7 +234,7 @@ const isYearlyVisible = window.getComputedStyle(yearlyExpensesDiv).display !== '
 if (isDailyVisible) {
   displayMode = 'day-wise';
   axios
-      .get(`http://13.127.45.135:3000/data?page=${page}`, {
+      .get(`http://52.66.121.103:3000/data?page=${page}`, {
         headers: { "Authorisation": token },
         params: { date: currentDate ,  listperPage:listperPage }
       })
@@ -250,7 +250,7 @@ if (isDailyVisible) {
 } else if (isMonthlyVisible) {
   displayMode = 'month-wise';
   axios
-      .get(`http://13.127.45.135:3000/monthlydata?page=${page}`, {
+      .get(`http://52.66.121.103:3000/monthlydata?page=${page}`, {
         headers: { "Authorisation": token },
         params: {month: test,  listperPage:listperPage }
       })
@@ -265,7 +265,7 @@ if (isDailyVisible) {
 } else if (isYearlyVisible) {
   displayMode = 'year-wise';
   axios
-  .get(`http://13.127.45.135:3000/yearlydata?page=${page}`, {
+  .get(`http://52.66.121.103:3000/yearlydata?page=${page}`, {
     headers: { "Authorisation": token },
     params: {year: year ,  listperPage:listperPage }
   })
@@ -284,7 +284,7 @@ if (isDailyVisible) {
   async function deleteUser(id, price){
         console.log("******************", price);
         const token = localStorage.getItem('token');
-       await axios.delete(`http://13.127.45.135:3000/delete/${id}?price=${price}`, {headers: {"Authorisation": token}})
+       await axios.delete(`http://52.66.121.103:3000/delete/${id}?price=${price}`, {headers: {"Authorisation": token}})
           removeuserfromScreen(id);
 
     }
@@ -301,16 +301,16 @@ if (isDailyVisible) {
     document.getElementById('premium').onclick = async function(e){
     const token = localStorage.getItem('token')
     console.log("%^%%^", token)
-    //const response = await axios.get('http://13.127.45.135:3000/purchasepremiumship');
+    //const response = await axios.get('http://52.66.121.103:3000/purchasepremiumship');
                                                             
 
-   const response = await axios.get('http://13.127.45.135:3000/purchase/purchasepremiumship', {headers: {"Authorisation": token}});
+   const response = await axios.get('http://52.66.121.103:3000/purchase/purchasepremiumship', {headers: {"Authorisation": token}});
     console.log(response);
     var options= {
         "key": response.data.key_id,
         "order_id": response.data.order.id,
         "handler": async function(response){
-            await axios.post('http://13.127.45.135:3000/purchase/updatetransactionstatus',{
+            await axios.post('http://52.66.121.103:3000/purchase/updatetransactionstatus',{
                 order_id: options.order_id,
                 payment_id: response.razorpay_payment_id,
             },{headers: {"Authorisation": token} })
@@ -327,7 +327,7 @@ if (isDailyVisible) {
     e.preventDefault()
 
     rzrpay1.on('payment.failed', async function(response){
-        await axios.post('http://13.127.45.135:3000/purchase/updatefailedtransaction',{
+        await axios.post('http://52.66.121.103:3000/purchase/updatefailedtransaction',{
                 order_id: options.order_id,
                 payment_id: response.razorpay_payment_id,
             },{headers: {"Authorisation": token} })
@@ -402,7 +402,7 @@ async function updateMonth(){
     const rowsperpage = localStorage.getItem('rowsbydefault');
     console.log("localstoragetaken", rowsperpage);
 
-    await axios.get(`http://13.127.45.135:3000/monthlydata?page=${page}`, {headers: {"Authorisation": token}, params: {month: test, listperPage: rowsperpage}}).then((response) => {
+    await axios.get(`http://52.66.121.103:3000/monthlydata?page=${page}`, {headers: {"Authorisation": token}, params: {month: test, listperPage: rowsperpage}}).then((response) => {
         
 
     console.log("response of request", response);
@@ -500,7 +500,7 @@ function  goToPreviousyear() {
      year = currentDate.getFullYear();
     const token = localStorage.getItem('token');
   console.log("year", year);
-    await axios.get(`http://13.127.45.135:3000/yearlydata?page=${page}`,{ headers: {"Authorisation": token }, params: { year: year ,  listperPage:rowsPerPage }})
+    await axios.get(`http://52.66.121.103:3000/yearlydata?page=${page}`,{ headers: {"Authorisation": token }, params: { year: year ,  listperPage:rowsPerPage }})
       .then((response) => {
         console.log('Response:', response);
         for (var i = 0; i < response.data.newentry.length; i++) {
@@ -551,7 +551,7 @@ function  goToPreviousyear() {
             document.getElementById('leaderboard').onclick = async function(e){
                 e.preventDefault()
 
-                const response = await axios.get('http://13.127.45.135:3000/premiumfeatures/premiumuserdata', {headers: {"Authorisation": token}});
+                const response = await axios.get('http://52.66.121.103:3000/premiumfeatures/premiumuserdata', {headers: {"Authorisation": token}});
                 console.log("hello daarlingssss", response);
                 const firstNode = document.getElementById('leaders');
                 
@@ -582,14 +582,14 @@ function  goToPreviousyear() {
     event.preventDefault()
     const token = localStorage.getItem('token')
     //console.log("@#@#@#@#",token)
-    await axios.get('http://13.127.45.135:3000/premiumfeatures/download', { headers: {"Authorisation" : token}})
+    await axios.get('http://52.66.121.103:3000/premiumfeatures/download', { headers: {"Authorisation" : token}})
     .then(async (response)=>{
         if(response.status===200){
             var a= document.createElement("a");
             a.href = response.data.fileUrl;
             a.download = 'myexpenses.csv';
             a.click();
-            await axios.get('http://13.127.45.135:3000/premiumfeatures/getData', {headers : {"Authorisation": token}})
+            await axios.get('http://52.66.121.103:3000/premiumfeatures/getData', {headers : {"Authorisation": token}})
             .then((response)=>{
                 console.log("&*&*&*&*", response.data.newentry[0]);
                 //showOnScreen(response.data.newentry[0].fileUrl)
